@@ -250,3 +250,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+
+  // Back to top button functionality
+  const backToTopButton = document.querySelector('.back-to-top a');
+  if (backToTopButton) {
+    backToTopButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
