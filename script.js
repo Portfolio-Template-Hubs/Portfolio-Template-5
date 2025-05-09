@@ -1,7 +1,7 @@
 // Enhanced Portfolio Interactions
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize Typed.js
+  // Initialize Typed.js with enhanced options
   const typedElement = document.querySelector('.typed-text');
   if (typedElement) {
     new Typed(typedElement, {
@@ -9,13 +9,38 @@ document.addEventListener('DOMContentLoaded', () => {
         'Web Developer',
         'UI/UX Designer',
         'Frontend Engineer',
-        'Creative Coder'
+        'Creative Coder',
+        'Problem Solver',
+        'Tech Enthusiast'
       ],
       typeSpeed: 80,
       backSpeed: 40,
       backDelay: 1500,
       startDelay: 500,
-      loop: true
+      loop: true,
+      cursorChar: '|',
+      fadeOut: true,
+      smartBackspace: true
+    });
+  }
+  
+  // Add parallax effect to hero section
+  const heroSection = document.querySelector('.hero');
+  if (heroSection) {
+    window.addEventListener('mousemove', (e) => {
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
+      
+      heroSection.style.backgroundPosition = `${x * 10}px ${y * 10}px`;
+      
+      // Move particles based on mouse position for subtle effect
+      const particles = document.querySelectorAll('.hero-particles span');
+      particles.forEach(particle => {
+        const speed = particle.getAttribute('data-speed') || 1;
+        const xPos = (window.innerWidth - e.pageX * speed) / 100;
+        const yPos = (window.innerHeight - e.pageY * speed) / 100;
+        particle.style.transform = `translateX(${xPos}px) translateY(${yPos}px)`;
+      });
     });
   }
 
@@ -112,12 +137,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Animate sections on scroll with enhanced effects
+  // Enhanced scroll reveal animations with staggered effects
   const animatedSections = document.querySelectorAll('section');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if(entry.isIntersecting) {
         entry.target.classList.add('in-view');
+        
+        // Add staggered animation to children elements
+        const animElements = entry.target.querySelectorAll('.animate-on-scroll');
+        animElements.forEach((el, index) => {
+          el.style.transitionDelay = `${index * 0.1}s`;
+          setTimeout(() => {
+            el.classList.add('animated');
+          }, 100);
+        });
       }
     });
   }, { threshold: 0.15, rootMargin: '-50px' });
@@ -125,6 +159,30 @@ document.addEventListener('DOMContentLoaded', () => {
   animatedSections.forEach(section => {
     observer.observe(section);
   });
+  
+  // Add animate-on-scroll class to elements that should animate
+  document.querySelectorAll('.project-card, .skill-card, .detail-item, .contact-item').forEach(el => {
+    el.classList.add('animate-on-scroll');
+  });
+  
+  // Add scroll-triggered animations
+  const addScrollClass = () => {
+    const scrollPosition = window.scrollY;
+    
+    // Parallax effect for sections
+    document.querySelectorAll('section').forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.offsetHeight;
+      if (scrollPosition > sectionTop - window.innerHeight / 1.5 && 
+          scrollPosition < sectionTop + sectionHeight) {
+        const speed = section.getAttribute('data-scroll-speed') || 0.1;
+        section.style.backgroundPositionY = `${(scrollPosition - sectionTop) * speed}px`;
+      }
+    });
+  };
+  
+  window.addEventListener('scroll', addScrollClass);
+  addScrollClass();
 
   // Animate skill bars when in view
   const skillsSection = document.querySelector('.skills-section');
